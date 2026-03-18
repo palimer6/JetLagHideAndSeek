@@ -257,18 +257,13 @@ const zoneMatchingQuestionsSchema = baseMatchingQuestionSchema.extend({
     cat: z
         .object({
             adminLevel: z.union([
+                z.literal(1),
                 z.literal(2),
                 z.literal(3),
                 z.literal(4),
-                z.literal(5),
-                z.literal(6),
-                z.literal(7),
-                z.literal(8),
-                z.literal(9),
-                z.literal(10),
             ]),
         })
-        .default(() => ({ adminLevel: 3 }) as { adminLevel: 3 }),
+        .default(() => ({ adminLevel: 1 }) as { adminLevel: 1 }),
 });
 
 const homeGameMatchingQuestionsSchema = baseMatchingQuestionSchema.extend({

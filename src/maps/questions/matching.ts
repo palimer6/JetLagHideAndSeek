@@ -18,6 +18,7 @@ import {
 } from "@/lib/context";
 import {
     findAdminBoundary,
+    findJetLagBoundary,
     findPlacesInZone,
     LOCATION_FIRST_TAG,
     nearestToQuestion,
@@ -182,7 +183,7 @@ export const determineMatchingBoundary = _.memoize(
                 break;
             }
             case "zone": {
-                boundary = await findAdminBoundary(
+                boundary = await findJetLagBoundary(
                     question.lat,
                     question.lng,
                     question.cat.adminLevel,

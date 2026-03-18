@@ -105,6 +105,27 @@ out center;
     return response;
 };
 
+export const findJetLagBoundary = async (
+    latitude: number,
+    longitude: number,
+    jetLagLevel: 1 | 2 | 3 | 4,
+) => {
+    switch (jetLagLevel) {
+        case 1: {
+            return findAdminBoundary(latitude, longitude, 4); // Bundesland
+        }
+        case 2: {
+            return findAdminBoundary(latitude, longitude, 5); // Regierungsbezirk
+        }
+        case 3: {
+            return findAdminBoundary(latitude, longitude, 6); // Landkreis / Kreisfreie Stadt
+        }
+        case 4: {
+            return findAdminBoundary(latitude, longitude, 8); // Stadt/Gemeinde
+        }
+    }
+};
+
 export const findAdminBoundary = async (
     latitude: number,
     longitude: number,
