@@ -145,7 +145,7 @@ export const determineMeasuringBoundary = async (
                         _.uniqBy(
                             (
                                 await findPlacesInZone(
-                                    '["aeroway"="aerodrome"]["iata"]', // Only commercial airports have IATA codes,
+                                    '["aeroway"="aerodrome"]["iata"]["icao"~"^ED..$"]', // Only commercial airports have IATA codes,
                                     "Finding airports...",
                                 )
                             ).elements,
