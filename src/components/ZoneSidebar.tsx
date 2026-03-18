@@ -742,11 +742,11 @@ export const ZoneSidebar = () => {
                                     options={[
                                         {
                                             label: "Railway Stations",
-                                            value: "[railway=station]",
+                                            value: "[railway=station][!usage][!tourism][service!=no]",
                                         },
                                         {
                                             label: "Railway Halts",
-                                            value: "[railway=halt]",
+                                            value: "[railway=halt][!usage][!tourism][service!=no]",
                                         },
                                         {
                                             label: "Railway Stops",
