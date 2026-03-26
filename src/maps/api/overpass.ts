@@ -115,13 +115,44 @@ export const findJetLagBoundary = async (
             return findAdminBoundary(latitude, longitude, 4); // Bundesland
         }
         case 2: {
-            return findAdminBoundary(latitude, longitude, 5); // Regierungsbezirk
-        }
-        case 3: {
             return findAdminBoundary(latitude, longitude, 6); // Landkreis / Kreisfreie Stadt
         }
-        case 4: {
+        case 3: {
             return findAdminBoundary(latitude, longitude, 8); // Stadt/Gemeinde
+        }
+        case 4: {
+            return findAdminBoundary(latitude, longitude, 9); // Stadtbezirk / Gemeindeteil mit Selbstverwaltung
+        }
+    }
+};
+
+// UNUSED
+/*
+export const findMultilevelBoundary = async (
+    latitude: number,
+    longitude: number,
+    jetLagLevel: 1 | 2 | 3 | 4,
+) => {
+    if (jetLagLevel === 1) {
+        return findAdminBoundary(latitude, longitude, 4); // Bundesland
+    } else if (jetLagLevel === 2) {
+        return findAdminBoundary(latitude, longitude, 6); // Landkreis / Kreisfreie Stadt
+    } else if (jetLagLevel === 3) {
+        return findAdminBoundary(latitude, longitude, 8); // Stadt/Gemeinde
+    } else if (jetLagLevel === 4) {
+        const query =
+            `[out:json];
+            is_in(${latitude}, ${longitude})->.a;
+            (
+                rel(pivot.a)["admin_level"="9"];
+                rel(pivot.a)["admin_level"="10"];
+            );
+            out geom;`;
+        const data = await getOverpassData(query, "Determining matching zone...");
+        const count = data.elements.length;
+        const higherIndex = data.elements.findIndex((element) => element.admin_level === 9);
+        if (higherIndex == -1) {
+
         }
     }
 };
@@ -146,6 +177,39 @@ export const fetchCoastline = async () => {
     const response = await cacheFetch(
         import.meta.env.BASE_URL + "/coastline50.geojson",
         "Fetching coastline data...",
+        CacheType.PERMANENT_CACHE,
+    );
+    const data = await response.json();
+    return data;
+};
+
+export const fetchBorderInt = async () => {
+    const response = await cacheFetch(
+        import.meta.env.BASE_URL + "/rmv-int.geojson",
+        "Fetching international border data...",
+        CacheType.PERMANENT_CACHE,
+    );
+    const data = await response.json();
+    return data;
+};
+
+export const fetchBorder1st = async () => {
+    console.log("fetch 1st");
+    const response = await cacheFetch(
+        import.meta.env.BASE_URL + "/rmv-1st.geojson",
+        "Fetching 1st admin. border data...",
+        CacheType.PERMANENT_CACHE,
+    );
+    console.log("fetched 1st");
+    const data = await response.json();
+    console.log("dataed 1st", data);
+    return data;
+};
+
+export const fetchBorder2nd = async () => {
+    const response = await cacheFetch(
+        import.meta.env.BASE_URL + "/rmv-2nd.geojson",
+        "Fetching 2nd admin. border data...",
         CacheType.PERMANENT_CACHE,
     );
     const data = await response.json();

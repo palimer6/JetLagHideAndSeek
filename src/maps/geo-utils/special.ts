@@ -12,9 +12,10 @@ export const extractStationLabel = (stationPoint: any) =>
     extractStationName(stationPoint) ||
     lngLatToText(stationPoint.geometry.coordinates);
 
-export const groupObjects = (objects: any[]): any[][] => {
+export const groupObjects = (objects: any[], filter: boolean = true): any[][] => {
     const filteredObjects = objects.filter(
         (obj) =>
+            !filter ||
             obj.properties.name !== undefined ||
             obj.properties["name:en"] !== undefined ||
             obj.properties.network !== undefined,

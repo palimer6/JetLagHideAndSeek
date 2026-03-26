@@ -13,6 +13,9 @@ import {
 } from "@/lib/context";
 import {
     fetchCoastline,
+    fetchBorderInt,
+    fetchBorder1st,
+    fetchBorder2nd,
     findPlacesInZone,
     findPlacesSpecificInZone,
     LOCATION_FIRST_TAG,
@@ -36,6 +39,34 @@ import type {
 const highSpeedBase = _.memoize(
     (features: Feature[]) => {
         const grouped = groupObjects(features);
+
+        const neighbored = grouped
+            .map((group) => {
+                return turf.multiLineString(
+                    connectToSeparateLines(
+                        group
+                            .filter((x) => turf.getType(x) === "LineString")
+                            .map((x) => x.geometry.coordinates),
+                    ),
+                );
+            })
+            .filter((x) => x.geometry.coordinates.length > 0);
+
+        return turf.combine(
+            turf.buffer(
+                turf.simplify(turf.featureCollection(neighbored), {
+                    tolerance: 0.001,
+                }),
+                0.001,
+            )!,
+        ).features[0];
+    },
+    (features) => `${JSON.stringify(features.map((x) => x.geometry))}`,
+);
+
+const adminBorderBase = _.memoize(
+    (features: Feature[]) => {
+        const grouped = groupObjects(features, false);
 
         const neighbored = grouped
             .map((group) => {
@@ -138,6 +169,62 @@ export const determineMeasuringBoundary = async (
                 )!,
             ];
         }
+    /*
+        case "border-int":
+        case "border-1st":
+        case "border-2nd": {
+            let lvl;
+            switch (question.type) {
+                case "border-int":
+                    lvl = 2;
+                    break;
+                case "border-1st":
+                    lvl = 4;
+                    break;
+                case "border-2nd":
+                    lvl = 6;
+                    break;
+            };
+            const query = `
+                [out:json][timeout:60];
+                relation(3158894)->.rmv_b;
+                .rmv_b map_to_area->.rmv;
+                relation[admin_level=${lvl}](area.rmv)->.lvl${lvl}rels;
+                (
+                    way(r.lvl${lvl}rels)(area.rmv)[admin_level];
+                    way(r.rmv_b)(r.lvl${lvl}rels)[admin_level];
+                );
+                out geom;`;
+            const data = await getOverpassData(
+                query,
+                "Finding administrative borders...",
+                CacheType.ZONE_CACHE
+            );
+
+            const val = osmtogeojson(data);
+            console.log(data);
+            console.log(val);
+            return "";
+        }
+    */
+        case "border-int":
+        case "border-1st":
+        case "border-2nd":
+            console.log("case");
+            let border;
+            switch (question.type) {
+                case "border-int":
+                    border = (await fetchBorderInt()) as Feature<MultiPolygon>;
+                    break;
+                case "border-1st":
+                    border = (await fetchBorder1st()) as Feature<MultiPolygon>;
+                    break;
+                case "border-2nd":
+                    border = (await fetchBorder2nd()) as Feature<MultiPolygon>;
+                    break;
+            }
+            const features = border.features;
+            return [adminBorderBase(features)];
         case "airport":
             return [
                 turf.combine(
