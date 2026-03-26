@@ -169,22 +169,8 @@ export const determineMeasuringBoundary = async (
                 )!,
             ];
         }
-    /*
-        case "border-int":
-        case "border-1st":
-        case "border-2nd": {
-            let lvl;
-            switch (question.type) {
-                case "border-int":
-                    lvl = 2;
-                    break;
-                case "border-1st":
-                    lvl = 4;
-                    break;
-                case "border-2nd":
-                    lvl = 6;
-                    break;
-            };
+        case "border-pull": {
+            const lvl = 5;
             const query = `
                 [out:json][timeout:60];
                 relation(3158894)->.rmv_b;
@@ -206,23 +192,23 @@ export const determineMeasuringBoundary = async (
             console.log(val);
             return "";
         }
-    */
         case "border-int":
         case "border-1st":
         case "border-2nd":
             console.log("case");
-            let border;
+            let adminLevel;
             switch (question.type) {
                 case "border-int":
-                    border = (await fetchBorderInt()) as Feature<MultiPolygon>;
+                    adminLevel = 2;
                     break;
                 case "border-1st":
-                    border = (await fetchBorder1st()) as Feature<MultiPolygon>;
+                    adminLevel = 5;
                     break;
                 case "border-2nd":
-                    border = (await fetchBorder2nd()) as Feature<MultiPolygon>;
+                    adminLevel = 6;
                     break;
             }
+            const border = (await fetchBorder(adminLevel)) as Feature<MultiPolygon>;
             const features = border.features;
             return [adminBorderBase(features)];
         case "airport":

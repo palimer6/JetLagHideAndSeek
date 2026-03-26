@@ -154,8 +154,13 @@ export const findMultilevelBoundary = async (
         if (higherIndex == -1) {
 
         }
+        const elements = data.elements;
+        const higherLevel = elements.find((element) => element.admin_level === 9);
+        const geo = osmtogeojson(data);
+
     }
 };
+*/
 
 export const findAdminBoundary = async (
     latitude: number,
@@ -173,6 +178,15 @@ out geom;
     return geo.features?.[0];
 };
 
+// UNUSED
+/*
+export const findLandmass = async (latitude: number, longitude: number) => {
+    const query = `[out:json];is_in(${latitude}, ${longitude})->.a;(rel(pivot.a)[place=island];rel(pivot.a)[place=islet];);out geom;`;
+    const data = await getOverpassData(query, "Determining landmass...");
+
+}
+*/
+
 export const fetchCoastline = async () => {
     const response = await cacheFetch(
         import.meta.env.BASE_URL + "/coastline50.geojson",
@@ -183,33 +197,12 @@ export const fetchCoastline = async () => {
     return data;
 };
 
-export const fetchBorderInt = async () => {
+export const fetchBorder = async (
+    adminLevel: 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10
+) => {
     const response = await cacheFetch(
-        import.meta.env.BASE_URL + "/rmv-int.geojson",
+        import.meta.env.BASE_URL + "/border-" + adminLevel + ".geojson",
         "Fetching international border data...",
-        CacheType.PERMANENT_CACHE,
-    );
-    const data = await response.json();
-    return data;
-};
-
-export const fetchBorder1st = async () => {
-    console.log("fetch 1st");
-    const response = await cacheFetch(
-        import.meta.env.BASE_URL + "/rmv-1st.geojson",
-        "Fetching 1st admin. border data...",
-        CacheType.PERMANENT_CACHE,
-    );
-    console.log("fetched 1st");
-    const data = await response.json();
-    console.log("dataed 1st", data);
-    return data;
-};
-
-export const fetchBorder2nd = async () => {
-    const response = await cacheFetch(
-        import.meta.env.BASE_URL + "/rmv-2nd.geojson",
-        "Fetching 2nd admin. border data...",
         CacheType.PERMANENT_CACHE,
     );
     const data = await response.json();

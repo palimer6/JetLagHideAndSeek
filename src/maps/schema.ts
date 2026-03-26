@@ -305,6 +305,7 @@ const ordinaryMeasuringQuestionSchema = baseMeasuringQuestionSchema.extend({
             z.literal("hospital-full").describe("Hospital Question (Small+Medium Games)"),
             z.literal("library-full").describe("Library Question (Small+Medium Games)"),
             z.literal("consulate-full").describe("Foreign Consulate Question (Small+Medium Games)"),
+            z.literal("border-pull").describe("Pull border"),
         ])
         .default("airport"),
 });
